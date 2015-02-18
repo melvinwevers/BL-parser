@@ -99,16 +99,16 @@ sub atText {
     $self->{hrNewspaperData}->{paper_dc_date} =~ s/\./-/g;
   }
   elsif($self->{bInPlaceofPublication}) {
-    $self->{hrNewspaperData}->{paper_dcterms_spatial} = $hrText->{sText};
+    $self->{hrNewspaperData}->{paper_dcterms_spatial} = $hrText->{sText}; 
   }
   if($self->{bInPageImageFile} ) {
     # Is er een apart veld voor het plaatje?
-    $self->{hrNewspaperData}->{paper_blablabla_plaatje} = $hrText->{sText};
+    $self->{hrNewspaperData}->{paper_dc_identifier_resolver} = $hrText->{sText};
 
     # Dit is ook wel een goed iets - maar dan zonder .tif aan het eind - als
     # identifier.
-    $self->{hrNewspaperData}->{paper_blablabla_identifier} = $hrText->{sText};
-    $self->{hrNewspaperData}->{paper_blablabla_identifier} =~ s/\.[^\.]+$//;
+    $self->{hrNewspaperData}->{paper_dc_identifier} = $hrText->{sText};
+    $self->{hrNewspaperData}->{paper_dc_identifier} =~ s/\.[^\.]+$//;
   }
   elsif($self->{bInPageWord}) {
     push(@{$self->{arText}}, HTML::Entities::decode_entities($hrText->{sText}))
