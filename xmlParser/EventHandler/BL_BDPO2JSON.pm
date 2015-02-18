@@ -22,6 +22,10 @@ sub new {
   $self->{bInPageWord} = undef;
   $self->{bInPageImageFile} = undef;
   $self->{bInPlaceofPublication} = undef;
+  $self->{bInSubCollection} = undef;
+  $self->{bInTypeofPublication} = undef;
+
+
 
   return $self;
 }
@@ -52,6 +56,18 @@ sub atTag {
   }
   elsif( $hrTag->{sTagName} eq '/title' ) {
     $self->{bInTitleTag} = undef;
+  }
+  elsif( $hrTag->{sTagName} eq 'subCollection' ) {
+    $self->{bInSubCollection} = 1;
+  }
+  elsif( $hrTag->{sTagName} eq '/subCollection' ) {
+    $self->{bInSubCollection} = undef;
+  }
+    elsif( $hrTag->{sTagName} eq 'typeOfPublication' ) {
+    $self->{bInTypeofPublication} = 1;
+  }
+  elsif( $hrTag->{sTagName} eq '/typeOfPublication' ) {
+    $self->{bInTypeofPublication} = undef;
   }
   elsif( $hrTag->{sTagName} eq 'placeOfPublication' ) {
     $self->{bInPlaceofPublication} = 1;
@@ -93,13 +109,21 @@ sub atText {
 
   if($self->{bInTitleTag} ) {
     $self->{hrNewspaperData}->{paper_dc_title} = $hrText->{sText};
+    $self->{hrNewspaperData}->{article_dc_title} = $hrText->{sText};
   }
   elsif($self->{bInNormalisedDate}) {
     $self->{hrNewspaperData}->{paper_dc_date} = $hrText->{sText};
     $self->{hrNewspaperData}->{paper_dc_date} =~ s/\./-/g;
   }
+  elsif($self->{bInTypeofPublication}) {
+    $self->{hrNewspaperData}->{article_dc_subject} = $hrText->{sText};
+  }
+  elsif($self->{bInSubCollection}) {
+    $self->{hrNewspaperData}->{paper_dcterms_spatial} = $hrText->{sText};
+    $self->{hrNewspaperData}->{paper_dcterms_temporal} = $hrText->{sText};
+  }
   elsif($self->{bInPlaceofPublication}) {
-    $self->{hrNewspaperData}->{paper_dcterms_spatial} = $hrText->{sText}; 
+    $self->{hrNewspaperData}->{paper_dcterms_spatial_creation} = $hrText->{sText};
   }
   if($self->{bInPageImageFile} ) {
     # Is er een apart veld voor het plaatje?
@@ -107,8 +131,8 @@ sub atText {
 
     # Dit is ook wel een goed iets - maar dan zonder .tif aan het eind - als
     # identifier.
-    $self->{hrNewspaperData}->{paper_dc_identifier} = $hrText->{sText};
-    $self->{hrNewspaperData}->{paper_dc_identifier} =~ s/\.[^\.]+$//;
+    $self->{hrNewspaperData}->{identifier} = $hrText->{sText};
+    $self->{hrNewspaperData}->{identifier} =~ s/\.[^\.]+$//;
   }
   elsif($self->{bInPageWord}) {
     push(@{$self->{arText}}, HTML::Entities::decode_entities($hrText->{sText}))
