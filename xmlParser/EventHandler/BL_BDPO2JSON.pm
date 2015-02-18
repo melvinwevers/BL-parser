@@ -46,7 +46,7 @@ sub atTag {
   }
   elsif( $hrTag->{sTagName} eq '/BL_newspaper' ) {
     # Prepare the text
-    $self->{hrNewspaperData}->{sText} = join(' ', @{$self->{arText}});
+    $self->{hrNewspaperData}->{text_content} = join(' ', @{$self->{arText}});
 
     # print everything we have as JSON
     print JSON::to_json( $self->{hrNewspaperData}, { utf8 => 1, pretty => 1 } );
