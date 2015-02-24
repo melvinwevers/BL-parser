@@ -25,13 +25,13 @@ if __name__ == "__main__":
     aArticles = json.loads(sJSON)
     fhFile.close()
 
-    # Dit is even om te laten zien dat het werkt
+    # This is a check to see whether it works
     #for dArticle in aArticles:
     #  print "Title: %s" % dArticle['article_dc_title'].encode("utf8")
     #  print "Text: %s" % dArticle['text_content'][0:120].encode("utf8")
     #  print
 
-    # Het zou me niet verbazen als dit ook werkt:
+    # the bulk index command
     es.bulk_index(ES_INDEX, ES_TYPE, aArticles, id_field='_id')
 
 
