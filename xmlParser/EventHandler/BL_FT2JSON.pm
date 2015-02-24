@@ -52,8 +52,8 @@ sub init {
 
   # This is hard-coded...
   $self->{hrNewspaperData}->{paper_dc_title} = "The Financial Times";
-  $self->{hrNewspaperData}->{paper_dcterms_spatial} = "National Daily";
-  $self->{hrNewspaperData}->{paper_dcterms_temporal} = "National Daily";
+  $self->{hrNewspaperData}->{paper_dcterms_spatial} = "National";
+  $self->{hrNewspaperData}->{paper_dcterms_temporal} = "Daily";
 }
 
 # This one is called when a tag has been read completely
