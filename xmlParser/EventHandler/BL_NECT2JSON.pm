@@ -2,11 +2,12 @@ use strict;
 use HTML::Entities;
 use JSON;
 
-package xmlParser::EventHandler::BL_BDPO2JSON;
+package xmlParser::EventHandler::BL_NECT2JSON;
 
 use Data::Dumper;
 
 # Input is an XML file in BL format
+# If you want this parser to work on Pagelevel change 
 
 # Constructor
 sub new {
@@ -17,6 +18,7 @@ sub new {
 
   # Initialise something
   $self->{bInTitleTag} = undef;
+  $self->{bInArticleTitle} = undef;
   $self->{bInNormalisedDate} = undef;
   $self->{bInPageText} = undef;
   $self->{bInPageWord} = undef;
@@ -41,11 +43,11 @@ sub atStartOfFile {
 sub atTag {
   my ($self, $hrTag) = @_;
 
-  if( $hrTag->{sTagName} eq 'BL_newspaper' ) {
+  if( $hrTag->{sTagName} eq 'BL_article') {
     $self->{hrNewspaperData} = {};
     $self->{arText} = ();
   }
-  elsif( $hrTag->{sTagName} eq '/BL_newspaper' ) {
+  elsif( $hrTag->{sTagName} eq '/BL_article') {
     # Prepare the text
     $self->{hrNewspaperData}->{text_content} = join(' ', @{$self->{arText}});
 
@@ -58,16 +60,22 @@ sub atTag {
   elsif( $hrTag->{sTagName} eq '/title' ) {
     $self->{bInTitleTag} = undef;
   }
+   elsif( $hrTag->{sTagName} eq 'dc:Title' ) {
+    $self->{bInArticleTitle} = 1;
+  }
+  elsif( $hrTag->{sTagName} eq '/dc:Title' ) {
+    $self->{bInArticleTitle} = undef;
+  }
   elsif( $hrTag->{sTagName} eq 'subCollection' ) {
     $self->{bInSubCollection} = 1;
   }
   elsif( $hrTag->{sTagName} eq '/subCollection' ) {
     $self->{bInSubCollection} = undef;
   }
-    elsif( $hrTag->{sTagName} eq 'typeOfPublication' ) {
+    elsif( $hrTag->{sTagName} eq 'dc:Type' ) {
     $self->{bInTypeofPublication} = 1;
   }
-  elsif( $hrTag->{sTagName} eq '/typeOfPublication' ) {
+  elsif( $hrTag->{sTagName} eq '/dc:Type' ) {
     $self->{bInTypeofPublication} = undef;
   }
   elsif( $hrTag->{sTagName} eq 'placeOfPublication' ) {
@@ -82,24 +90,24 @@ sub atTag {
   elsif( $hrTag->{sTagName} eq '/normalisedDate' ) {
     $self->{bInNormalisedDate} = undef;
   }
-  elsif( $hrTag->{sTagName} eq 'pageText' ) {
+  elsif( $hrTag->{sTagName} eq 'articleText' ) {
     $self->{bInPageText} = 1;
   }
-  elsif( $hrTag->{sTagName} eq '/pageText' ) {
+  elsif( $hrTag->{sTagName} eq '/articleText' ) {
     $self->{bInPageText} = undef;
   }
-  elsif( $hrTag->{sTagName} eq 'pageImageFile' ) {
+  elsif( $hrTag->{sTagName} eq 'articleImageFile' ) {
     $self->{bInPageImageFile} = 1;
   }
-  elsif( $hrTag->{sTagName} eq '/pageImageFile' ) {
+  elsif( $hrTag->{sTagName} eq '/articleImageFile' ) {
     $self->{bInPageImageFile} = undef;
   }
-  elsif( $hrTag->{sTagName} eq 'pageWord' ) {
+  elsif( $hrTag->{sTagName} eq 'articleWord' ) {
     if ( $self->{bInPageText} ) {
       $self->{bInPageWord} = 1;
     }
   }
-  elsif( $hrTag->{sTagName} eq '/pageWord' ) {
+  elsif( $hrTag->{sTagName} eq '/articleWord' ) {
     $self->{bInPageWord} = undef;
   }
 }
@@ -132,8 +140,11 @@ sub atText {
 
     # Dit is ook wel een goed iets - maar dan zonder .tif aan het eind - als
     # identifier.
-    $self->{hrNewspaperData}->{identifier} = $hrText->{sText};
-    $self->{hrNewspaperData}->{identifier} =~ s/\.[^\.]+$//;
+    $self->{hrNewspaperData}->{_id} = $hrText->{sText};
+    $self->{hrNewspaperData}->{_id} =~ s/\.[^\.]+$//;
+    # However, Texcavator can not deal with dashes, so we replace these by
+    # underscores
+    $self->{hrNewspaperData}->{_id} =~ s/-/_/g;
   }
   elsif($self->{bInPageWord}) {
     push(@{$self->{arText}}, HTML::Entities::decode_entities($hrText->{sText}))

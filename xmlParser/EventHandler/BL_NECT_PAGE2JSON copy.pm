@@ -2,7 +2,7 @@ use strict;
 use HTML::Entities;
 use JSON;
 
-package xmlParser::EventHandler::BL_BDPO2JSON;
+package xmlParser::EventHandler::BL_NECT_PAGE2JSON;
 
 use Data::Dumper;
 
@@ -41,11 +41,11 @@ sub atStartOfFile {
 sub atTag {
   my ($self, $hrTag) = @_;
 
-  if( $hrTag->{sTagName} eq 'BL_newspaper' ) {
+  if( $hrTag->{sTagName} eq 'BL_page') {
     $self->{hrNewspaperData} = {};
     $self->{arText} = ();
   }
-  elsif( $hrTag->{sTagName} eq '/BL_newspaper' ) {
+  elsif( $hrTag->{sTagName} eq '/BL_page') {
     # Prepare the text
     $self->{hrNewspaperData}->{text_content} = join(' ', @{$self->{arText}});
 
