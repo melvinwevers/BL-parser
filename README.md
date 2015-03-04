@@ -1,4 +1,6 @@
 # BL-parser
+Author: Tom Kenter
+With modifications by Melvin Wevers. 
 
 A collection of Perl parsers to change the BL newspapers from XML to JSON format. 
 
