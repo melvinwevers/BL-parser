@@ -1,0 +1,25 @@
+#elasticsearch
+
+curl -XDELETE 'http://localhost:9200/twitter/'
+
+
+#importing XML files
+
+Parsing XML to JSON using XML-PERL-Parser
+
+
+sh convert_XML_files.sh NAMEPARSER INPUTDIR OUTPUTDIR NUMBEROFCORES 
+
+sh convert_XML_files.sh BL_FT2JSON XML/  outputDir 4
+
+importing JSON files in elasticsearch
+using python script es_bulk_import.py
+#in this file one need to configurate their elastic search settings
+ES_CLUSTER = 'http://localhost:9200/' #location of the running elasticsearch server
+ES_INDEX = 'kb' #name of the index in which the json files should be indexed
+ES_TYPE = 'doc' #the mapping type. You can also specify this upon import otherwise ES picks up the mapping from the files
+
+#querying the ES 
+see http://www.elasticsearch.org/guide/en/elasticsearch/reference/
+or use chrome-plugin 'Sense' for a JSON viewer. https://chrome.google.com/webstore/detail/sense-beta/lhjgkmllcaadmopgmanpapmpjgmfcfig
+
